@@ -17,7 +17,7 @@ Installing "TutorLms NELC Integration" can be done either by searching for "Tuto
    - Select "Download ZIP".
 3. Upload the ZIP file through the 'Plugins > Add New > Upload' screen in your WordPress dashboard.
 4. Activate the plugin through the 'Plugins' menu in WordPress.
-5. Go to the plugin settings page under 'Settings > NELC Integration'.
+5. Go to the plugin settings page under 'NELC Integration > General'.
 6. Add the endpoints provided by NELC.
 7. Test the connection to ensure everything is set up correctly.
 
