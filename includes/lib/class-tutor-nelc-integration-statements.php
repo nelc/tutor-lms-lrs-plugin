@@ -148,7 +148,7 @@ class Tutor_NELC_Integration_Statements {
                                 'objectType' => 'Agent',
                             ),
                     'verb' => array(
-                                'id' => 'http://activitystrea.ms/watch',
+                                'id' => 'https://w3id.org/xapi/acrossx/verbs/watched',
                                 'display' => array("en-US" => "watched") 
                             ),
                     'object' => array(
@@ -156,7 +156,7 @@ class Tutor_NELC_Integration_Statements {
                                     'definition' => array(
                                         'name' => array(strval($plt_lang) => $tax_args['lessonName']),
                                         'description' => array(strval($plt_lang) => $tax_args['lessonDesc']),
-                                        'type' => 'http://adlnet.gov/expapi/activities/lesson'
+                                        'type' => 'https://w3id.org/xapi/video/activity-type/video'
                                     ),
                                     'objectType' => 'Activity',
                                 ),

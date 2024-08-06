@@ -439,7 +439,7 @@ function course_rated_hook( $comment_id )
     $body = tutor_nelc_integration()->register_statment( 'rated', [
         'name' => $user->display_name,
         'email' => $user->user_email,
-        'courseId' => '123',
+        'courseId' => "$course_id",
         'courseName' => $course->post_title,
         'courseDesc' => strip_tags($course->post_content),
         'instructor' => $author->display_name,
