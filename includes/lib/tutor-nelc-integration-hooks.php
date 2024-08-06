@@ -159,56 +159,58 @@ function nelec_register_statemente_tutor ( $course_id )
     
 }
 
-add_action('tutor/lesson_list/before/topic', 'nelec_initialize_statemente_tutor');
-//add_action('tutor/course/started', 'nelec_initialize_statemente_tutor');
+//add_action('tutor/lesson_list/before/topic', 'nelec_initialize_statemente_tutor');
+add_action('tutor/course/started', 'nelec_initialize_statemente_tutor', 10, 2);
+add_action('tutor_course_start_before', 'nelec_initialize_statemente_tutor');
 function nelec_initialize_statemente_tutor ( $course_id ){
+
     if (!course_integrate_status($course_id)) {
         return;
     }
-    global $post;
-    $user = wp_get_current_user();
+
+    // $is_init = get_user_meta( get_current_user_id(), "course_init_$course_id", true );
+
+    // if ($is_init && $is_init == 'yes') {
+    //     return;
+    // }
+
+    // print_r($course_id);
+    // exit;
+
+        // الحصول على معلومات الطالب
+        $user = wp_get_current_user();
+
+        // الحصول على معلومات الدورة
+        $course = get_post($course_id);
+    
+        // الحصول على معلومات المدرس
+        $author_id = $course->post_author;
+        $author = get_userdata($author_id);
 
     // Get student info
-    $ntd = get_user_meta( $user->ID, 'nelc_national_id' , true );
-
-    // Get author info
-    $author_id = $post->post_author;
-	$author = get_userdata($author_id);
-
-    // Get course info
-    $course = get_post( $course_id );
-
-    $is_init = get_user_meta( get_current_user_id(), "course_init_$course_id", true );
-
-    if($is_init && $is_init == 'yes'){
-       // update_user_meta(get_current_user_id(), 'tutor_nelc_xapi_notify_action', 'error');
+    //$ntd = get_user_meta( $user->ID, 'nelc_national_id' , true );
+    
+    $body = tutor_nelc_integration()->register_statment( 'initialized', [
+        'name' => "$user->display_name",
+        'email' => "$user->user_email",
+        'courseId' => "$course->ID",
+        'courseName' => "$course->post_title",
+        'courseDesc' => strip_tags($course->post_content),    
+        'instructor' => "$author->display_name",
+        'inst_email' => "$author->user_email",
+    ]);
+    
+    $response = tutor_nelc_integration()->register_interactions( $body );
+    if (is_wp_error($response)) {
+        update_user_meta(get_current_user_id(), 'tutor_nelc_xapi_notify_action', 'error');
     }else{
-        $body = tutor_nelc_integration()->register_statment( 'initialized', [
-            'name' => "$user->display_name",
-            'email' => "$user->user_email",
-            'courseId' => "$course->ID",
-            'courseName' => "$course->post_title",
-            'courseDesc' => substr( strip_tags($course->post_content), 0, 50 ) ?? $course->post_title,    
-            'instructor' => "$author->display_name",
-            'inst_email' => "$author->user_email",
-        ]);
-        
-        $response = tutor_nelc_integration()->register_interactions( $body );
-        if (is_wp_error($response)) {
-            update_user_meta(get_current_user_id(), 'tutor_nelc_xapi_notify_action', 'error');
-        }else{
-            update_user_meta( get_current_user_id(), "course_init_$course_id", 'yes' );
-            update_user_meta(get_current_user_id(), 'tutor_nelc_xapi_notify_action', $response['body']);
-        }
-
+        //update_user_meta( get_current_user_id(), "course_init_$course_id", 'yes' );
+        update_user_meta(get_current_user_id(), 'tutor_nelc_xapi_notify_action', $response['body']);
     }
-
 }
 
 add_action('tutor_lesson_completed_after', 'lesson_completed_hook');
 function lesson_completed_hook($lesson_id) {
-
-    global $post;
 
     $user = wp_get_current_user();
     $lesson = get_post( $lesson_id );
@@ -235,7 +237,7 @@ function lesson_completed_hook($lesson_id) {
         'inst_email' => "$author->user_email",
         'courseId' => "$course->ID",
         'courseName' => "$course->post_title",
-        'courseDesc' => substr( strip_tags($course->post_content), 0, 50 ) ?? $course->post_title,
+        'courseDesc' => strip_tags($course->post_content),
     ]);
     $response1 = tutor_nelc_integration()->register_interactions( $body1 );
 
@@ -244,7 +246,7 @@ function lesson_completed_hook($lesson_id) {
         'email' => "$user->user_email",
         'courseId' => "$course->ID",
         'courseName' => "$course->post_title",
-        'courseDesc' => substr( strip_tags($course->post_content), 0, 50 ) ?? $course->post_title,
+        'courseDesc' => strip_tags($course->post_content),
         'instructor' => "$author->display_name",
         'inst_email' => "$author->user_email",
         'scaled' => round($scaled, 2),
@@ -318,18 +320,18 @@ function quiz_attempt_hook($attempt_id) {
 
     $attempt_count = get_completed_mmm($quiz_id, $user->ID );
 
-    $body = tutor_nelc_integration()->register_statment('attempted', [
+    $body = tutor_nelc_integration()->register_statment( 'attempted', [
         'name' => $user->display_name,
         'email' => $user->user_email,
         'quizUrl' => get_permalink($quiz_id),
-        'quizName' => $quiz_data->post_title,
+        'quizName' =>  $quiz_data->post_title,
         'quizDesc' => strip_tags($quiz_data->post_content),
         'instructor' => $author->display_name,
         'inst_email' => $author->user_email,
         'attempNumber' => $attempt_count,
-        'courseId' => $course->ID,
+        'courseId' => $course_id,
         'courseName' => $course->post_title,
-        'courseDesc' => substr(strip_tags($course->post_content), 0, 50) ?? $course->post_title,
+        'courseDesc' => strip_tags($course->post_content),
         'scaled' => round($percentage / 100, 2),
         'raw' => $points,
         'min' => $min,
@@ -339,42 +341,6 @@ function quiz_attempt_hook($attempt_id) {
     ]);
 
     $response = tutor_nelc_integration()->register_interactions($body);
-
-    // echo "<pre>";
-    // print_r($response);
-    // echo "</pre>";
-    // echo "================================================================";
-    // echo "================================================================";
-    // echo "<pre>";
-    // print_r($body);
-    // echo "</pre>";
-    // echo "<pre>";
-    // print_r($attempt_data);
-    // echo "</pre>";
-    // echo "=========================";
-    // echo "<pre>";
-    // print_r([
-    //     'name' => $user->display_name,
-    //     'email' => $user->user_email,
-    //     'quizUrl' => get_permalink($quiz_id),
-    //     'quizName' => $quiz_data->post_title,
-    //     'quizDesc' => strip_tags($quiz_data->post_content),
-    //     'instructor' => $author->display_name,
-    //     'inst_email' => $author->user_email,
-    //     'attempNumber' => $attempt_count,
-    //     'courseId' => $course->ID,
-    //     'courseName' => $course->post_title,
-    //     'courseDesc' => substr(strip_tags($course->post_content), 0, 50) ?? $course->post_title,
-    //     'scaled' => round($percentage / 100, 2),
-    //     'raw' => $points,
-    //     'min' => $min,
-    //     'max' => $total_points,
-    //     'completion' => true,
-    //     'success' => $is_passed == 1 ? true : false,
-    // ]);
-    // echo "</pre>";
-
-    // exit;
 
     if (get_option('lmtni_xapi_notific', true) !== 'on') {
         return;
@@ -405,14 +371,14 @@ function course_completed_hook($course_id) {
     $certificate_link = $is_comp ? esc_url(site_url("/?cert_hash=" . $is_comp->completed_hash)) : null;
 
     // إنشاء بيانات التصريح الأول
-    $body = tutor_nelc_integration()->register_statment('completedCourse', [
+    $body = tutor_nelc_integration()->register_statment( 'completedCourse', [
         'name' => $user->display_name,
         'email' => $user->user_email,
-        'courseId' => $course->ID,
+        'courseId' =>  "$course_id",
         'courseName' => $course->post_title,
-        'courseDesc' => substr(strip_tags($course->post_content), 0, 50) ?? $course->post_title,
+        'courseDesc' => strip_tags($course->post_content),
         'instructor' => $author->display_name,
-        'inst_email' => $author->user_email,
+        'inst_email' => $author->user_email
     ]);
 
     // إرسال بيانات التصريح الأول
@@ -424,9 +390,9 @@ function course_completed_hook($course_id) {
         'email' => $user->user_email,
         'certUrl' => $certificate_link,
         'certName' => $certificate_link,
-        'courseId' => $course->ID,
+        'courseId' => "$course_id",
         'courseName' => $course->post_title,
-        'courseDesc' => substr(strip_tags($course->post_content), 0, 50) ?? $course->post_title,
+        'courseDesc' => strip_tags($course->post_content),
     ]);
 
     // إرسال بيانات التصريح الثاني
@@ -448,52 +414,41 @@ function course_completed_hook($course_id) {
         update_user_meta(get_current_user_id(), 'tutor_nelc_xapi_notify_action', $response1['body']);
     }
 
-    // echo "<pre>";
-    //     print_r($response);
-    // echo "</pre>";
-    // echo "<pre>";
-    //     print_r($response1);
-    // echo "</pre>";
-    // exit;
-
-
 }
 
 add_action('tutor_after_rating_placed', 'course_rated_hook');
 function course_rated_hook( $comment_id )
 {
-    $course_itegrate = get_option('lmtni_xapi_courses_integrate');
-    $link_status =  get_post_meta( get_the_ID(), 'tutor_nelc_integration_link_course', true ) === 'on' ? 'checked' : '';
-    if ($link_status != 'checked' &&  !$course_itegrate) {
-        # code...
-    }
+
     $user = wp_get_current_user();
     $comment = get_post( $comment_id );
     $course_id = $comment->post_parent;
     $course = get_post( $course_id );
+
     if (!course_integrate_status($course_id)) {
         return;
     }
-    $author  = get_userdata($course->post_author);
 
+    $author_id = $course->post_author;
+    $author = get_userdata($author_id);
 
     $rate_info = tutor_utils()->get_course_rating_by_user($user->ID);
     $rate_star = $rate_info->rating;
     $rate_comment = $rate_info->review;
 
     $body = tutor_nelc_integration()->register_statment( 'rated', [
-        'name' => "$user->display_name",
-        'email' => "$user->user_email",
-        'courseId' => "$course->ID",
-        'courseName' => "$course->post_title",
-        'courseDesc' => substr( strip_tags($course->post_content), 0, 50 ) ?? $course->post_title,    
-        'instructor' => "$author->display_name",
-        'inst_email' => "$author->user_email",
+        'name' => $user->display_name,
+        'email' => $user->user_email,
+        'courseId' => '123',
+        'courseName' => $course->post_title,
+        'courseDesc' => strip_tags($course->post_content),
+        'instructor' => $author->display_name,
+        'inst_email' => $author->user_email,
         'scaled' => $rate_star / 5,
         'raw' => $rate_star,
         'min' => 0,
         'max' => 5,
-        'comment' => "$rate_comment",
+        'comment' => $rate_comment,
     ]);
     
 
@@ -508,8 +463,4 @@ function course_rated_hook( $comment_id )
         update_user_meta(get_current_user_id(), 'tutor_nelc_xapi_notify_action', $response['body']);
     }
 
-    // echo "<pre>";
-    //     print_r($response);
-    // echo "</pre>";
-    // exit;
 }
