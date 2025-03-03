@@ -1,5 +1,7 @@
 <?php
-// Browser.php - اسم الملف الذي ستضع فيه هذا الكود
+namespace tutorLmsLrsPlugin\includes\Interactions;
+
+
 class Browser {
     public static function getBrowser() {
         $u_agent = $_SERVER['HTTP_USER_AGENT'];

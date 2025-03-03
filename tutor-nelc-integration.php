@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: NELC Integration
- * Version: 1.0.0
+ * Version: 2.0.0
  * Plugin URI: https://wa.me/00201062332549
  * Description: Tutor NELC Integration wordprees plugin, It was launched specifically to link with the National Center for E-Learning in Saudi Arabia, so that the tool sends all the activities of the trainees, starting from registering for the course until obtaining the certificate.
  * Author: Mahmoud Hassan
@@ -14,7 +14,7 @@
  *
  * @package WordPress
  * @author Mahmoud Hassan
- * @since 1.0.0
+ * @since 2.0.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -24,22 +24,35 @@ if ( ! defined( 'ABSPATH' ) ) {
 // Load plugin class files.
 require_once 'includes/class-tutor-nelc-integration.php';
 require_once 'includes/class-tutor-nelc-integration-settings.php';
+require_once 'includes/Interactions/Browser.php';
+require_once 'includes/Interactions/Attempted.php';
+require_once 'includes/Interactions/Completed.php';
+require_once 'includes/Interactions/CompletedCourse.php';
+require_once 'includes/Interactions/CompletedUnit.php';
+require_once 'includes/Interactions/Earned.php';
+require_once 'includes/Interactions/Initialized.php';
+require_once 'includes/Interactions/Progressed.php';
+require_once 'includes/Interactions/Rated.php';
+require_once 'includes/Interactions/Registered.php';
+require_once 'includes/Interactions/Watched.php';
+require_once 'includes/Interactions/XapiIntegration.php';
 
 // Load plugin libraries.
 require_once 'includes/lib/class-tutor-nelc-integration-admin-api.php';
-require_once 'includes/lib/class-tutor-nelc-integration-browser.php';
-require_once 'includes/lib/class-tutor-nelc-integration-statements.php';
-require_once 'includes/lib/class-tutor-nelc-integration-interactions.php';
+require_once 'includes/lib/class-tutor-nelc-add-user-meta.php';
+require_once 'includes/lib/class-tutor-nelc-add-course-meta-box.php';
+//require_once 'includes/lib/class-tutor-nelc-integration-statements.php';
+//require_once 'includes/lib/class-tutor-nelc-integration-interactions.php';
 require_once 'includes/lib/tutor-nelc-integration-hooks.php';
 
 /**
  * Returns the main instance of tutor_nelc_integration to prevent the need to use globals.
  *
- * @since  1.0.0
+ * @since  2.0.0
  * @return object tutor_nelc_integration
  */
 function tutor_nelc_integration() {
-	$instance = tutor_nelc_integration::instance( __FILE__, '1.0.0' );
+	$instance = tutor_nelc_integration::instance( __FILE__, '2.0.0' );
 
 	if ( is_null( $instance->settings ) ) {
 		$instance->settings = tutor_nelc_integration_Settings::instance( $instance );

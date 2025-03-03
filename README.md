@@ -38,14 +38,14 @@ This plugin is specifically crafted to streamline integration with NELC, providi
 
 ## Changelog
 
-### 1.0.0
+### 2.0.0
 
 * 2023-11-28
 * Initial release
 
 ## Upgrade Notice
 
-### 1.0.0
+### 2.0.0
 
 * 2023-11-28
 * Initial release
