@@ -19,7 +19,7 @@ class tutor_nelc_integration_Settings {
 	 *
 	 * @var     object
 	 * @access  private
-	 * @since   3.0.4
+	 * @since   3.0.5
 	 */
 	private static $_instance = null; //phpcs:ignore
 
@@ -28,7 +28,7 @@ class tutor_nelc_integration_Settings {
 	 *
 	 * @var     object
 	 * @access  public
-	 * @since   3.0.4
+	 * @since   3.0.5
 	 */
 	public $parent = null;
 
@@ -37,7 +37,7 @@ class tutor_nelc_integration_Settings {
 	 *
 	 * @var     string
 	 * @access  public
-	 * @since   3.0.4
+	 * @since   3.0.5
 	 */
 	public $base = '';
 
@@ -46,7 +46,7 @@ class tutor_nelc_integration_Settings {
 	 *
 	 * @var     array
 	 * @access  public
-	 * @since   3.0.4
+	 * @since   3.0.5
 	 */
 	public $settings = array();
 
@@ -166,7 +166,7 @@ class tutor_nelc_integration_Settings {
 		// If you're not including an image upload then you can leave this function call out.
 		wp_enqueue_media();
 
-		wp_register_script( $this->parent->_token . '-settings-js', $this->parent->assets_url . 'js/settings' . $this->parent->script_suffix . '.js', array( 'farbtastic', 'jquery' ), '3.0.4', true );
+		wp_register_script( $this->parent->_token . '-settings-js', $this->parent->assets_url . 'js/settings' . $this->parent->script_suffix . '.js', array( 'farbtastic', 'jquery' ), '3.0.5', true );
 		wp_enqueue_script( $this->parent->_token . '-settings-js' );
 	}
 
@@ -480,7 +480,7 @@ class tutor_nelc_integration_Settings {
 	 *
 	 * Ensures only one instance of tutor_nelc_integration_Settings is loaded or can be loaded.
 	 *
-	 * @since 3.0.4
+	 * @since 3.0.5
 	 * @static
 	 * @see tutor_nelc_integration()
 	 * @param object $parent Object instance.
@@ -496,7 +496,7 @@ class tutor_nelc_integration_Settings {
 	/**
 	 * Cloning is forbidden.
 	 *
-	 * @since 3.0.4
+	 * @since 3.0.5
 	 */
 	public function __clone() {
 		_doing_it_wrong( __FUNCTION__, esc_html( __( 'Cloning of tutor_nelc_integration_API is forbidden.' ) ), esc_attr( $this->parent->_version ) );
@@ -505,7 +505,7 @@ class tutor_nelc_integration_Settings {
 	/**
 	 * Unserializing instances of this class is forbidden.
 	 *
-	 * @since 3.0.4
+	 * @since 3.0.5
 	 */
 	public function __wakeup() {
 		_doing_it_wrong( __FUNCTION__, esc_html( __( 'Unserializing instances of tutor_nelc_integration_API is forbidden.' ) ), esc_attr( $this->parent->_version ) );

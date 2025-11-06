@@ -38,7 +38,7 @@ This plugin is specifically crafted to streamline integration with NELC, providi
 
 ## Changelog
 
-### 3.0.4
+### 3.0.5
 * 2025-11-11
 ### 3.0.0
 * 2025-11-11

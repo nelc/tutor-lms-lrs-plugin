@@ -19,7 +19,7 @@ class tutor_nelc_integration {
 	 *
 	 * @var     object
 	 * @access  private
-	 * @since   3.0.4
+	 * @since   3.0.5
 	 */
 	private static $_instance = null; //phpcs:ignore
 
@@ -35,7 +35,7 @@ class tutor_nelc_integration {
 	 *
 	 * @var     object
 	 * @access  public
-	 * @since   3.0.4
+	 * @since   3.0.5
 	 */
 	public $settings = null;
 
@@ -44,7 +44,7 @@ class tutor_nelc_integration {
 	 *
 	 * @var     string
 	 * @access  public
-	 * @since   3.0.4
+	 * @since   3.0.5
 	 */
 	public $_version; //phpcs:ignore
 
@@ -53,7 +53,7 @@ class tutor_nelc_integration {
 	 *
 	 * @var     string
 	 * @access  public
-	 * @since   3.0.4
+	 * @since   3.0.5
 	 */
 	public $_token; //phpcs:ignore
 
@@ -62,7 +62,7 @@ class tutor_nelc_integration {
 	 *
 	 * @var     string
 	 * @access  public
-	 * @since   3.0.4
+	 * @since   3.0.5
 	 */
 	public $file;
 
@@ -71,7 +71,7 @@ class tutor_nelc_integration {
 	 *
 	 * @var     string
 	 * @access  public
-	 * @since   3.0.4
+	 * @since   3.0.5
 	 */
 	public $dir;
 
@@ -80,7 +80,7 @@ class tutor_nelc_integration {
 	 *
 	 * @var     string
 	 * @access  public
-	 * @since   3.0.4
+	 * @since   3.0.5
 	 */
 	public $assets_dir;
 
@@ -89,7 +89,7 @@ class tutor_nelc_integration {
 	 *
 	 * @var     string
 	 * @access  public
-	 * @since   3.0.4
+	 * @since   3.0.5
 	 */
 	public $assets_url;
 
@@ -98,7 +98,7 @@ class tutor_nelc_integration {
 	 *
 	 * @var     string
 	 * @access  public
-	 * @since   3.0.4
+	 * @since   3.0.5
 	 */
 	public $script_suffix;
 
@@ -108,7 +108,7 @@ class tutor_nelc_integration {
 	 * @param string $file File constructor.
 	 * @param string $version Plugin version.
 	 */
-	public function __construct( $file = '', $version = '3.0.4' ) {
+	public function __construct( $file = '', $version = '3.0.5' ) {
 		$this->_version = $version;
 		$this->_token   = 'tutor_nelc_integration';
 
@@ -196,7 +196,7 @@ class tutor_nelc_integration {
 	 *
 	 * @access  public
 	 * @return void
-	 * @since   3.0.4
+	 * @since   3.0.5
 	 */
 	public function enqueue_styles() {
 		wp_register_style( $this->_token . '-frontend', esc_url( $this->assets_url ) . 'css/frontend.css', array(), $this->_version );
@@ -211,7 +211,7 @@ class tutor_nelc_integration {
 	 *
 	 * @access  public
 	 * @return  void
-	 * @since   3.0.4
+	 * @since   3.0.5
 	 */
 	public function enqueue_scripts() {
 		wp_register_script( $this->_token . '-frontend', esc_url( $this->assets_url ) . 'js/frontend' . $this->script_suffix . '.js', array( 'jquery' ), $this->_version, true );
@@ -241,7 +241,7 @@ class tutor_nelc_integration {
 	 * @param string $hook Hook parameter.
 	 *
 	 * @return  void
-	 * @since   3.0.4
+	 * @since   3.0.5
 	 */
 	public function admin_enqueue_scripts( $hook = '' ) {
 		wp_register_script( $this->_token . '-admin', esc_url( $this->assets_url ) . 'js/admin' . $this->script_suffix . '.js', array( 'jquery' ), $this->_version, true );
@@ -253,7 +253,7 @@ class tutor_nelc_integration {
 	 *
 	 * @access  public
 	 * @return  void
-	 * @since   3.0.4
+	 * @since   3.0.5
 	 */
 	public function load_localisation() {
 		load_plugin_textdomain( 'tutor-nelc-integration', false, dirname( plugin_basename( $this->file ) ) . '/lang/' );
@@ -264,7 +264,7 @@ class tutor_nelc_integration {
 	 *
 	 * @access  public
 	 * @return  void
-	 * @since   3.0.4
+	 * @since   3.0.5
 	 */
 	public function load_plugin_textdomain() {
 		$domain = 'tutor-nelc-integration';
@@ -285,10 +285,10 @@ class tutor_nelc_integration {
 	 *
 	 * @return Object tutor_nelc_integration instance
 	 * @see tutor_nelc_integration()
-	 * @since 3.0.4
+	 * @since 3.0.5
 	 * @static
 	 */
-	public static function instance( $file = '', $version = '3.0.4' ) {
+	public static function instance( $file = '', $version = '3.0.5' ) {
 		if ( is_null( self::$_instance ) ) {
 			self::$_instance = new self( $file, $version );
 		}
@@ -299,7 +299,7 @@ class tutor_nelc_integration {
 	/**
 	 * Cloning is forbidden.
 	 *
-	 * @since 3.0.4
+	 * @since 3.0.5
 	 */
 	public function __clone() {
 		_doing_it_wrong( __FUNCTION__, esc_html( __( 'Cloning of tutor_nelc_integration is forbidden' ) ), esc_attr( $this->_version ) );
@@ -309,7 +309,7 @@ class tutor_nelc_integration {
 	/**
 	 * Unserializing instances of this class is forbidden.
 	 *
-	 * @since 3.0.4
+	 * @since 3.0.5
 	 */
 	public function __wakeup() {
 		_doing_it_wrong( __FUNCTION__, esc_html( __( 'Unserializing instances of tutor_nelc_integration is forbidden' ) ), esc_attr( $this->_version ) );
@@ -320,7 +320,7 @@ class tutor_nelc_integration {
 	 *
 	 * @access  public
 	 * @return  void
-	 * @since   3.0.4
+	 * @since   3.0.5
 	 */
 	public function install() {
 		$this->_log_version_number();
@@ -331,7 +331,7 @@ class tutor_nelc_integration {
 	 *
 	 * @access  public
 	 * @return  void
-	 * @since   3.0.4
+	 * @since   3.0.5
 	 */
 	private function _log_version_number() { //phpcs:ignore
 		update_option( $this->_token . '_version', $this->_version );
