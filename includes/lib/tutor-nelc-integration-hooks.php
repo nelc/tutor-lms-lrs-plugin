@@ -47,12 +47,25 @@ function nelec_register_statemente_tutor ( $course_id )
     $course = get_post( $course_id );
     $courseName = sanitize_text_field($course->post_title);
     $courseDesc = strip_tags($course->post_content);
-    $duration = get_post_meta($course_id, '_nelc_course_duration', true);
     $courseLang = get_post_meta($course_id, '_nelc_course_language', true);
     
     // استخدام القيم الافتراضية إذا كانت فارغة
+        $duration = get_post_meta($course_id, '_nelc_course_duration', true);
     if (empty($duration)) {
-        $duration = 'PT50H00M00S';
+        $duration = get_post_meta($course_id, '_course_duration', true);
+
+        if ($duration) {
+            $duration_data = maybe_unserialize($duration);
+
+            $hours = isset($duration_data['hours']) ? intval($duration_data['hours']) : 0;
+            $minutes = isset($duration_data['minutes']) ? intval($duration_data['minutes']) : 0;
+            $seconds = 0;
+
+            // التنسيق على شكل PTxxHxxMxxS
+            $duration = sprintf('PT%02dH%02dM%02dS', $hours, $minutes, $seconds);
+        } else {
+            $duration = 'PT00H00M00S'; // في حال لم توجد قيمة
+        }
     }
     
     if (empty($courseLang)) {
