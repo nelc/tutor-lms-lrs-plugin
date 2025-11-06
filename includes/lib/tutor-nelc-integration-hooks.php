@@ -137,7 +137,7 @@ function nelec_initialize_statemente_tutor ( $course_id ){
         'inst_email' => $instEmail,
         'courseId' => $course_id,
         'courseName' => $courseName,
-        'courseDesc' => $courseDesc,
+        'courseDesc' => '',
         'courseLang' => $courseLang,
     ]);
 
@@ -210,7 +210,7 @@ function lesson_completed_hook($lesson_id) {
                 'inst_email' => $instEmail,
                 'courseId' => $course->ID,
                 'courseName' => $courseName,
-                'courseDesc' => $courseDesc,
+                'courseDesc' => '',
                 'courseLang' => $courseLang,
                 'lessonDuration' => $lessonDuration,
             ]);
@@ -231,7 +231,7 @@ function lesson_completed_hook($lesson_id) {
         'email' => $usEmail,
         'courseId' => $course->ID,
         'courseName' => $courseName,
-        'courseDesc' => $courseDesc,
+        'courseDesc' => '',
         'instructor' => $instName,
         'inst_email' => $instEmail,
         'scaled' => round($scaled, 2),
@@ -278,7 +278,7 @@ function lesson_completed_hook($lesson_id) {
             'inst_email' => $instEmail,
             'courseId' => $course->ID,
             'courseName' => $courseName,
-            'courseDesc' => $courseDesc,
+            'courseDesc' => '',
             'courseLang' => $courseLang,
         ]);
 
@@ -371,7 +371,7 @@ function quiz_attempt_hook($attempt_id) {
         'attempNumber' => $attempt_count,
         'courseId' => $course_id,
         'courseName' => $courseName,
-        'courseDesc' => $courseDesc,
+        'courseDesc' => '',
         'courseLang' => $courseLang,
         'scaled' => round($percentage / 100, 2),
         'raw' => (float) $points,
@@ -428,7 +428,7 @@ function course_completed_hook($course_id) {
         'email' => $usEmail,
         'courseId' => $course_id,
         'courseName' => $courseName,
-        'courseDesc' => $courseDesc,
+        'courseDesc' => '',
         'courseLang' => $courseLang,
         'instructor' => $instName,
         'inst_email' => $instEmail,
@@ -451,7 +451,7 @@ function course_completed_hook($course_id) {
         'certName' => "Cert: $courseName",
         'courseId' => $course_id,
         'courseName' => $courseName,
-        'courseDesc' => $courseDesc,
+        'courseDesc' => '',
         'courseLang' => $courseLang,
     ]);
     if (!empty($response1) || !is_wp_error($response1)) {
@@ -504,7 +504,7 @@ function course_rated_hook( $comment_id )
         'email' => $usEmail,
         'courseId' => $course_id,
         'courseName' => $courseName,
-        'courseDesc' => $courseDesc,
+        'courseDesc' => '',
         'courseLang' => $courseLang,
         'instructor' => $instName,
         'inst_email' => $instEmail,
@@ -577,7 +577,7 @@ function mark_video_watched_callback() {
 			'inst_email' => $instEmail,
 			'courseId' => $course->ID,
 			'courseName' => $courseName,
-			'courseDesc' => $courseDesc,
+			'courseDesc' => '',
 			'courseLang' => $courseLang,
 			'completion' => true,
 			'duration' => $duration,
