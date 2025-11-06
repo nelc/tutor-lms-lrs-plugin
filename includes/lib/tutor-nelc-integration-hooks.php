@@ -216,7 +216,7 @@ function lesson_completed_hook($lesson_id) {
     $response = $xapiSender->Completed([
                 'name' => $usNID,
                 'email' => $usEmail,
-                'lessonUrl'=> $lesson->guid,
+                'lessonUrl'=> $lesson->guid ?: get_permalink($lesson->ID),
                 'lessonName'=> $lessonName,
                 'lessonDesc'=> $lessonDesc,
                 'instructor' => $instName,
@@ -227,6 +227,7 @@ function lesson_completed_hook($lesson_id) {
                 'courseLang' => $courseLang,
                 'lessonDuration' => $lessonDuration,
             ]);
+
     if (!empty($response) || !is_wp_error($response)) {
         if (isset($response['http_code'])) {
             update_user_meta(get_current_user_id(), 'tutor_nelc_xapi_notify_action', $response['response']);
