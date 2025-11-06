@@ -133,7 +133,7 @@ function tnelc_enqueue_scripts() {
 		'tnelc-custom-fields-js',
 		$js_url,
 		array( 'tutor-course-builder' ),
-		'1.0.0',
+		'3.0.4',
 		true
 	);
 }
