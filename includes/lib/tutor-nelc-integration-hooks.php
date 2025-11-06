@@ -661,3 +661,26 @@ function enqueue_custom_script_for_tutor() {
     }
 }
 add_action('wp_enqueue_scripts', 'enqueue_custom_script_for_tutor');
+
+
+
+add_filter('tutor_lesson_details_response', function( $data, $lesson_id ) {
+    $duration = get_post_meta( $lesson_id, '_lesson_duration', true );
+
+    if ( ! empty( $duration ) ) {
+        $data['_lesson_duration'] = $duration;
+    }
+
+    return $data;
+}, 10, 2);
+
+add_action( 'save_post_lesson', function( $post_id, $post, $update ) {
+    if ( ! current_user_can( 'edit_post', $post_id ) ) {
+        return;
+    }
+
+    if ( isset( $_POST['_lesson_duration'] ) ) {
+        $duration = sanitize_text_field( $_POST['_lesson_duration'] );
+        update_post_meta( $post_id, '_lesson_duration', $duration );
+    }
+}, 10, 3);

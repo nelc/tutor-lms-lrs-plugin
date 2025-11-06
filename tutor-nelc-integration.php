@@ -124,3 +124,16 @@ function tutor_notify_action_check() {
 	}
 
 }
+
+
+add_action( 'tutor_after_course_builder_load', 'tnelc_enqueue_scripts' );
+function tnelc_enqueue_scripts() {
+	$js_url = plugin_dir_url( __FILE__ ) . 'custom-fields.js';
+	wp_enqueue_script(
+		'tnelc-custom-fields-js',
+		$js_url,
+		array( 'tutor-course-builder' ),
+		'1.0.0',
+		true
+	);
+}
