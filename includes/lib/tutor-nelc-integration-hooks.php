@@ -285,7 +285,7 @@ function lesson_completed_hook($lesson_id) {
         $response2 = $xapiSender2->CompletedUnit([
             'name' => $usNID,
             'email' => $usEmail,
-            'unitUrl'=> get_site_url() . '/course/unit/view.php?id=123',
+            'unitUrl'=> get_site_url() . '/course/unit/view.php?id='.$topic_id,
             'unitName'=> $unitName,
             'unitDesc'=> $unitDesc,
             'instructor' => $instName,
@@ -377,7 +377,7 @@ function quiz_attempt_hook($attempt_id) {
     $response = $xapiSender->Attempted([
         'name' => $usNID,
         'email' => $usEmail,
-        'quizUrl' => get_site_url() . '/course/quiz/view.php?id=123',
+        'quizUrl' => get_site_url() . '/course/quiz/view.php?id='.$quiz_id,
         'quizName' => $quiz_data->post_title,
         'quizDesc' => strip_tags($quiz_data->post_content),
         'instructor' => $instName,
@@ -685,3 +685,21 @@ add_action( 'save_post_lesson', function( $post_id, $post, $update ) {
         update_post_meta( $post_id, '_lesson_duration', $duration );
     }
 }, 10, 3);
+
+
+add_filter( 'tutor_course_details_response', 'tlcf_display_custom_field_data' );
+function tlcf_display_custom_field_data( array $data ) {
+	$course_id   = $data['ID'];
+	$telegram_url = get_post_meta( $course_id, '_telegram_url', true );
+	if ( $telegram_url ) {
+		$data['_telegram_url'] = $telegram_url;
+	}
+	return $data;
+}
+add_action( 'save_post_courses', 'tlcf_save_course_meta' );
+function tlcf_save_course_meta( int $post_id ) {
+	$telegram_url = sanitize_text_field( wp_unslash( $_POST['_telegram_url'] ) ?? '' );
+	if ( $telegram_url ) {
+		update_post_meta( $post_id, '_telegram_url', $telegram_url );
+	}
+}

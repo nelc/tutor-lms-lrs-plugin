@@ -37,8 +37,8 @@ class Registered
 
         $vars = array(
             'actor' => array(
-                        'name' => strval($actor),
                         'mbox'  => 'mailto:'.strval($actorEmail),
+                        'name' => strval($actor),
                         'objectType' => 'Agent',
                     ),
             'verb' => array(
@@ -63,6 +63,8 @@ class Registered
                             'language' => strval($this->lang),
                             "extensions" => array(
                                 'https://nelc.gov.sa/extensions/duration'=> $duration,
+                                "https://nelc.gov.sa/extensions/lms_url"=> get_site_url(),
+                                "https://nelc.gov.sa/extensions/program_url"=> strval($courseId),
                                 'https://nelc.gov.sa/extensions/learner_mobile_no'=> $learneMobileNo,
                                 'https://nelc.gov.sa/extensions/learner_full_name'=> $learnerFullName,
                                 'https://nelc.gov.sa/extensions/learner_nationality'=> $learnerNationality,
