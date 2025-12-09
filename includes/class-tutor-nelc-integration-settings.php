@@ -282,7 +282,77 @@ class tutor_nelc_integration_Settings {
 					'description' => __( 'Show alerts stating the arrival of reports to the National Center.', 'tutor-nelc-integration' ),
 					'type'        => 'checkbox',
 					'class'     => 'regular-text',
-				)
+				),
+					array(
+						'id'          => 'xapi_event_registered',
+						'label'       => __( 'Enable Registered Event', 'tutor-nelc-integration' ),
+						'description' => __( 'Enable or disable sending the Registered xAPI statement.', 'tutor-nelc-integration' ),
+						'type'        => 'checkbox',
+						'class'     => 'regular-text',
+					),
+					array(
+						'id'          => 'xapi_event_initialized',
+						'label'       => __( 'Enable Initialized Event', 'tutor-nelc-integration' ),
+						'description' => __( 'Enable or disable sending the Initialized xAPI statement.', 'tutor-nelc-integration' ),
+						'type'        => 'checkbox',
+						'class'     => 'regular-text',
+					),
+					array(
+						'id'          => 'xapi_event_watched',
+						'label'       => __( 'Enable Watched Event', 'tutor-nelc-integration' ),
+						'description' => __( 'Enable or disable sending the Watched xAPI statement.', 'tutor-nelc-integration' ),
+						'type'        => 'checkbox',
+						'class'     => 'regular-text',
+					),
+					array(
+						'id'          => 'xapi_event_completed_lesson',
+						'label'       => __( 'Enable Completed Lesson Event', 'tutor-nelc-integration' ),
+						'description' => __( 'Enable or disable sending the Completed Lesson xAPI statement.', 'tutor-nelc-integration' ),
+						'type'        => 'checkbox',
+						'class'     => 'regular-text',
+					),
+					array(
+						'id'          => 'xapi_event_completed_unit',
+						'label'       => __( 'Enable Completed Unit Event', 'tutor-nelc-integration' ),
+						'description' => __( 'Enable or disable sending the Completed Unit xAPI statement.', 'tutor-nelc-integration' ),
+						'type'        => 'checkbox',
+						'class'     => 'regular-text',
+					),
+					array(
+						'id'          => 'xapi_event_progressed',
+						'label'       => __( 'Enable Progressed Event', 'tutor-nelc-integration' ),
+						'description' => __( 'Enable or disable sending the Progressed xAPI statement.', 'tutor-nelc-integration' ),
+						'type'        => 'checkbox',
+						'class'     => 'regular-text',
+					),
+					array(
+						'id'          => 'xapi_event_attempted',
+						'label'       => __( 'Enable Attempted Event', 'tutor-nelc-integration' ),
+						'description' => __( 'Enable or disable sending the Attempted xAPI statement.', 'tutor-nelc-integration' ),
+						'type'        => 'checkbox',
+						'class'     => 'regular-text',
+					),
+					array(
+						'id'          => 'xapi_event_completed_course',
+						'label'       => __( 'Enable Completed Course Event', 'tutor-nelc-integration' ),
+						'description' => __( 'Enable or disable sending the Completed Course xAPI statement.', 'tutor-nelc-integration' ),
+						'type'        => 'checkbox',
+						'class'     => 'regular-text',
+					),
+					array(
+						'id'          => 'xapi_event_earned',
+						'label'       => __( 'Enable Earned Event', 'tutor-nelc-integration' ),
+						'description' => __( 'Enable or disable sending the Earned xAPI statement.', 'tutor-nelc-integration' ),
+						'type'        => 'checkbox',
+						'class'     => 'regular-text',
+					),
+					array(
+						'id'          => 'xapi_event_rated',
+						'label'       => __( 'Enable Rated Event', 'tutor-nelc-integration' ),
+						'description' => __( 'Enable or disable sending the Rated xAPI statement.', 'tutor-nelc-integration' ),
+						'type'        => 'checkbox',
+						'class'     => 'regular-text',
+					),
 			)
 		);
 
@@ -470,6 +540,13 @@ class tutor_nelc_integration_Settings {
 			if( isset( $_GET['tab'] ) && $_GET['tab'] === 'integration-testing'  ){
 				require_once 'tutor-nelc-xapi-integration-testing.php';
 			}
+		// Add developer info section at the bottom
+		$html .= '<div style="margin-top:40px;padding:15px;border-top:1px solid #eee;font-size:15px;color:#333;background:#f9f9f9;">'
+			. '<strong>تطوير: </strong> Bzzix للحلول البرمجية وتقنية المعلومات'
+			. '<br><strong>الدعم الفني:</strong> 010000944804 &nbsp;|&nbsp; 01062332549'
+			. '<br><strong>الموقع:</strong> <a href="https://bzzix.com" target="_blank">bzzix.com</a>'
+			. '</div>';
+
 		$html             .= '</div>' . "\n";
 
 		echo $html; //phpcs:ignore
