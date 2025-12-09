@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: tutor-nelc-integration 3.0.5\n"
+"Project-Id-Version: tutor-nelc-integration 3.0.6\n"
 "POT-Creation-Date: 2024-07-30 22:34+0300\n"
 "PO-Revision-Date: 2024-07-30 22:34+0300\n"
 "Last-Translator: \n"
