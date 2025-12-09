@@ -18,7 +18,7 @@ add_action('tutor_after_enroll', 'nelec_register_statemente_tutor');
 function nelec_register_statemente_tutor ( $course_id )
 {
 
-    if (!course_integrate_status($course_id) || !get_option('lmtni_xapi_event_registered')) {
+    if (!course_integrate_status($course_id)) {
         return;
     }
     global $post;
@@ -106,7 +106,7 @@ add_action('tutor/course/started', 'nelec_initialize_statemente_tutor', 10, 2);
 add_action('tutor_course_start_before', 'nelec_initialize_statemente_tutor');
 function nelec_initialize_statemente_tutor ( $course_id ){
 
-    if (!course_integrate_status($course_id) || !get_option('lmtni_xapi_event_initialized')) {
+    if (!course_integrate_status($course_id)) {
         return;
     }
 
@@ -172,7 +172,7 @@ function lesson_completed_hook($lesson_id) {
     $course_id = tutor_utils()->get_course_id_by_lesson($lesson_id);
     $course = get_post( $course_id );
 
-    if (!course_integrate_status($course_id) || !get_option('lmtni_xapi_event_completed_lesson')) {
+    if (!course_integrate_status($course_id)) {
         return;
     }
 
@@ -239,9 +239,8 @@ function lesson_completed_hook($lesson_id) {
     }
 
     // Send Progressed
-    if (get_option('lmtni_xapi_event_progressed')) {
-        $xapiSender1 = new XapiIntegration;
-        $response1 = $xapiSender1->Progressed([
+    $xapiSender1 = new XapiIntegration;
+    $response1 = $xapiSender1->Progressed([
         'name' => $usNID,
         'email' => $usEmail,
         'courseId' => $course->ID,
@@ -277,7 +276,7 @@ function lesson_completed_hook($lesson_id) {
 
     $is_unit_completed = check_student_completed_unit($user->ID, $topic_id);
 
-    if( $is_unit_completed && get_option('lmtni_xapi_event_completed_unit') ){
+    if( $is_unit_completed ){
 
         $unitName = sanitize_text_field($topic->post_title);
         $unitDesc = strip_tags($topic->post_content);
@@ -324,7 +323,7 @@ function quiz_attempt_hook($attempt_id) {
 
     $course_id = tutor_utils()->avalue_dot('course_id', $attempt_data);
     $course = get_post($course_id);
-    if (!course_integrate_status($course_id) || !get_option('lmtni_xapi_event_attempted')) {
+    if (!course_integrate_status($course_id)) {
         return;
     }
     $courseName = sanitize_text_field($course->post_title);
@@ -409,7 +408,7 @@ function quiz_attempt_hook($attempt_id) {
 
 add_action('tutor_course_complete_after', 'course_completed_hook', 10, 2);
 function course_completed_hook($course_id) {
-    if (!course_integrate_status($course_id) || !get_option('lmtni_xapi_event_completed_course')) {
+    if (!course_integrate_status($course_id)) {
         return;
     }
     $user = wp_get_current_user();
@@ -458,9 +457,8 @@ function course_completed_hook($course_id) {
         update_user_meta(get_current_user_id(), 'tutor_nelc_xapi_notify_action', 'error');
     }
 
-    if (get_option('lmtni_xapi_event_earned')) {
-        $xapiSender1 = new XapiIntegration;
-        $response1 = $xapiSender1->Earned([
+    $xapiSender1 = new XapiIntegration;
+    $response1 = $xapiSender1->Earned([
         'name' => $usNID,
         'email' => $usEmail,
         'certUrl' => $certificate_link,
@@ -502,7 +500,7 @@ function course_rated_hook( $comment_id )
         $courseLang = 'en-US';
     }
 
-    if (!course_integrate_status($course_id) || !get_option('lmtni_xapi_event_rated')) {
+    if (!course_integrate_status($course_id)) {
         return;
     }
 
@@ -582,9 +580,8 @@ function mark_video_watched_callback() {
 		$lessonName = sanitize_text_field($lesson->post_title);
     	$lessonDesc = strip_tags($lesson->post_content);
 
-        if (get_option('lmtni_xapi_event_watched')) {
-            $xapiSender = new XapiIntegration;
-            $response = $xapiSender->Watched([
+		$xapiSender = new XapiIntegration;
+		$response = $xapiSender->Watched([
 			'name' => $usNID,
 			'email' => $usEmail,
 			'lessonUrl'=> get_site_url() . '/course/video/view.php?id=' . $lesson_id,
@@ -600,16 +597,15 @@ function mark_video_watched_callback() {
 			'duration' => $duration,
 		]);
 
-            if (!empty($response) || !is_wp_error($response)) {
-                if (isset($response['http_code'])) {
-                    wp_send_json_success( __('The report has been sent to NELC', 'tutor-nelc-xapi') );
-                } else {
-                    wp_send_json_error($response['response']);
-                }
-            } else {
-                wp_send_json_error($response['response']);
-            }
-        }
+		if (!empty($response) || !is_wp_error($response)) {
+			if (isset($response['http_code'])) {
+				wp_send_json_success( __('The report has been sent to NELC', 'tutor-nelc-xapi') );
+			} else {
+				wp_send_json_error($response['response']);
+			}
+		} else {
+			wp_send_json_error($response['response']);
+		}
 
         
     } else {
