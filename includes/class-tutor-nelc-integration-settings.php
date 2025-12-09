@@ -19,7 +19,7 @@ class tutor_nelc_integration_Settings {
 	 *
 	 * @var     object
 	 * @access  private
-	 * @since   3.0.7
+	 * @since   3.0.8
 	 */
 	private static $_instance = null; //phpcs:ignore
 
@@ -28,7 +28,7 @@ class tutor_nelc_integration_Settings {
 	 *
 	 * @var     object
 	 * @access  public
-	 * @since   3.0.7
+	 * @since   3.0.8
 	 */
 	public $parent = null;
 
@@ -37,7 +37,7 @@ class tutor_nelc_integration_Settings {
 	 *
 	 * @var     string
 	 * @access  public
-	 * @since   3.0.7
+	 * @since   3.0.8
 	 */
 	public $base = '';
 
@@ -46,7 +46,7 @@ class tutor_nelc_integration_Settings {
 	 *
 	 * @var     array
 	 * @access  public
-	 * @since   3.0.7
+	 * @since   3.0.8
 	 */
 	public $settings = array();
 
@@ -166,7 +166,7 @@ class tutor_nelc_integration_Settings {
 		// If you're not including an image upload then you can leave this function call out.
 		wp_enqueue_media();
 
-		wp_register_script( $this->parent->_token . '-settings-js', $this->parent->assets_url . 'js/settings' . $this->parent->script_suffix . '.js', array( 'farbtastic', 'jquery' ), '3.0.7', true );
+		wp_register_script( $this->parent->_token . '-settings-js', $this->parent->assets_url . 'js/settings' . $this->parent->script_suffix . '.js', array( 'farbtastic', 'jquery' ), '3.0.8', true );
 		wp_enqueue_script( $this->parent->_token . '-settings-js' );
 	}
 
@@ -544,9 +544,9 @@ class tutor_nelc_integration_Settings {
 		$html .= '<div style="margin-top:40px;padding:18px 0 0 0;border-top:1px solid #eee;font-size:15px;color:#444;opacity:0.92;text-align:center;background:#f9f9f9;">'
 			. '<span style="font-weight:bold;">جميع الحقوق محفوظة &copy; '.date('Y').' المركز الوطني للتعليم الإلكتروني</span><br>'
 			. '<span>للدعم الفني عبر الواتساب: '
-				.'<a href="https://wa.me/966555555555" target="_blank" style="color:#25d366;font-weight:bold;text-decoration:none;">+966555555555</a>'
+				.'<a href="https://wa.me/201062332549" target="_blank" style="color:#25d366;font-weight:bold;text-decoration:none;">+201062332549</a>'
 				.' &nbsp;|&nbsp; '
-				.'<a href="https://wa.me/966512345678" target="_blank" style="color:#25d366;font-weight:bold;text-decoration:none;">+966512345678</a>'
+				.'<a href="https://wa.me/201000944804" target="_blank" style="color:#25d366;font-weight:bold;text-decoration:none;">+201000944804</a>'
 			.'</span>'
 			. '<br><span style="color:#888;font-size:13px;">تطوير: Bzzix للحلول البرمجية وتقنية المعلومات - <a href="https://bzzix.com" target="_blank" style="color:#0073aa;">bzzix.com</a></span>'
 		. '</div>';
@@ -561,7 +561,7 @@ class tutor_nelc_integration_Settings {
 	 *
 	 * Ensures only one instance of tutor_nelc_integration_Settings is loaded or can be loaded.
 	 *
-	 * @since 3.0.7
+	 * @since 3.0.8
 	 * @static
 	 * @see tutor_nelc_integration()
 	 * @param object $parent Object instance.
@@ -577,7 +577,7 @@ class tutor_nelc_integration_Settings {
 	/**
 	 * Cloning is forbidden.
 	 *
-	 * @since 3.0.7
+	 * @since 3.0.8
 	 */
 	public function __clone() {
 		_doing_it_wrong( __FUNCTION__, esc_html( __( 'Cloning of tutor_nelc_integration_API is forbidden.' ) ), esc_attr( $this->parent->_version ) );
@@ -586,7 +586,7 @@ class tutor_nelc_integration_Settings {
 	/**
 	 * Unserializing instances of this class is forbidden.
 	 *
-	 * @since 3.0.7
+	 * @since 3.0.8
 	 */
 	public function __wakeup() {
 		_doing_it_wrong( __FUNCTION__, esc_html( __( 'Unserializing instances of tutor_nelc_integration_API is forbidden.' ) ), esc_attr( $this->parent->_version ) );

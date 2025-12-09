@@ -730,9 +730,9 @@ add_action('admin_footer', function() {
     echo '<div style="margin:32px 0 0 0;padding:16px 0 0 0;text-align:center;font-size:15px;color:#444;opacity:0.85;">
     <span style="font-weight:bold;">جميع الحقوق محفوظة &copy; ' . date('Y') . ' المركز الوطني للتعليم الإلكتروني</span><br>
     <span>للدعم الفني عبر الواتساب: '
-        .'<a href="https://wa.me/966555555555" target="_blank" style="color:#25d366;font-weight:bold;text-decoration:none;">+966555555555</a>'
+        .'<a href="https://wa.me/201062332549" target="_blank" style="color:#25d366;font-weight:bold;text-decoration:none;">+20 106 233 2549</a>'
         .' &nbsp;|&nbsp; '
-        .'<a href="https://wa.me/966512345678" target="_blank" style="color:#25d366;font-weight:bold;text-decoration:none;">+966512345678</a>'
+        .'<a href="https://wa.me/201000944804" target="_blank" style="color:#25d366;font-weight:bold;text-decoration:none;">+20 100 094 4804</a>'
     .'</span>
     </div>';
 });
