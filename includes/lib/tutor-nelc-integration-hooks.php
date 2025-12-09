@@ -1,6 +1,11 @@
 <?php
 use tutorLmsLrsPlugin\includes\Interactions\XapiIntegration;
 
+function event_enabled($event_key) {
+    $option = get_option('lmtni_' . $event_key);
+    return $option === 'on' || $option === 1 || $option === true;
+}
+
 
 function course_integrate_status($course_id) {
     $course_itegrate = get_option('lmtni_xapi_courses_integrate');
@@ -18,7 +23,7 @@ add_action('tutor_after_enroll', 'nelec_register_statemente_tutor');
 function nelec_register_statemente_tutor ( $course_id )
 {
 
-    if (!course_integrate_status($course_id)) {
+    if (!course_integrate_status($course_id) || !event_enabled('xapi_event_registered')) {
         return;
     }
     global $post;
@@ -106,7 +111,7 @@ add_action('tutor/course/started', 'nelec_initialize_statemente_tutor', 10, 2);
 add_action('tutor_course_start_before', 'nelec_initialize_statemente_tutor');
 function nelec_initialize_statemente_tutor ( $course_id ){
 
-    if (!course_integrate_status($course_id)) {
+    if (!course_integrate_status($course_id) || !event_enabled('xapi_event_initialized')) {
         return;
     }
 
@@ -176,6 +181,11 @@ function lesson_completed_hook($lesson_id) {
         return;
     }
 
+    // منع إرسال الحدث إذا لم يكن فعالاً
+    $send_completed = event_enabled('xapi_event_completed_lesson');
+    $send_progressed = event_enabled('xapi_event_progressed');
+    $send_completed_unit = event_enabled('xapi_event_completed_unit');
+
     $user = wp_get_current_user();
     $ntd = get_user_meta( $user->ID, 'nelc_national_id' , true );
     $usName = $user->display_name;
@@ -212,8 +222,9 @@ function lesson_completed_hook($lesson_id) {
     // تنسيق المدة
     $lessonDuration = sprintf('PT%02dH%02dM00S', $hours, $minutes);
     // Send Lesson completed
-    $xapiSender = new XapiIntegration;
-    $response = $xapiSender->Completed([
+    if ($send_completed) {
+        $xapiSender = new XapiIntegration;
+        $response = $xapiSender->Completed([
                 'name' => $usNID,
                 'email' => $usEmail,
                 'lessonUrl'=> $lesson->guid ?: get_permalink($lesson->ID),
@@ -228,19 +239,21 @@ function lesson_completed_hook($lesson_id) {
                 'lessonDuration' => $lessonDuration,
             ]);
 
-    if (!empty($response) || !is_wp_error($response)) {
-        if (isset($response['http_code'])) {
-            update_user_meta(get_current_user_id(), 'tutor_nelc_xapi_notify_action', $response['response']);
+        if (!empty($response) || !is_wp_error($response)) {
+            if (isset($response['http_code'])) {
+                update_user_meta(get_current_user_id(), 'tutor_nelc_xapi_notify_action', $response['response']);
+            } else {
+                update_user_meta(get_current_user_id(), 'tutor_nelc_xapi_notify_action', 'error');
+            }
         } else {
             update_user_meta(get_current_user_id(), 'tutor_nelc_xapi_notify_action', 'error');
         }
-    } else {
-        update_user_meta(get_current_user_id(), 'tutor_nelc_xapi_notify_action', 'error');
     }
 
     // Send Progressed
-    $xapiSender1 = new XapiIntegration;
-    $response1 = $xapiSender1->Progressed([
+    if ($send_progressed) {
+        $xapiSender1 = new XapiIntegration;
+        $response1 = $xapiSender1->Progressed([
         'name' => $usNID,
         'email' => $usEmail,
         'courseId' => $course->ID,
@@ -252,14 +265,15 @@ function lesson_completed_hook($lesson_id) {
         'completion' => $percentage == 100 ? true : false,
         'courseLang' => $courseLang,
     ]);
-    if (!empty($response1) || !is_wp_error($response1)) {
-        if (isset($response1['http_code'])) {
-            update_user_meta(get_current_user_id(), 'tutor_nelc_xapi_notify_action', $response1['response']);
+        if (!empty($response1) || !is_wp_error($response1)) {
+            if (isset($response1['http_code'])) {
+                update_user_meta(get_current_user_id(), 'tutor_nelc_xapi_notify_action', $response1['response']);
+            } else {
+                update_user_meta(get_current_user_id(), 'tutor_nelc_xapi_notify_action', 'error');
+            }
         } else {
             update_user_meta(get_current_user_id(), 'tutor_nelc_xapi_notify_action', 'error');
         }
-    } else {
-        update_user_meta(get_current_user_id(), 'tutor_nelc_xapi_notify_action', 'error');
     }
 
 
@@ -276,11 +290,9 @@ function lesson_completed_hook($lesson_id) {
 
     $is_unit_completed = check_student_completed_unit($user->ID, $topic_id);
 
-    if( $is_unit_completed ){
-
+    if( $is_unit_completed && $send_completed_unit ){
         $unitName = sanitize_text_field($topic->post_title);
         $unitDesc = strip_tags($topic->post_content);
-
         $xapiSender2 = new XapiIntegration;
         $response2 = $xapiSender2->CompletedUnit([
             'name' => $usNID,
@@ -295,7 +307,6 @@ function lesson_completed_hook($lesson_id) {
             'courseDesc' => '',
             'courseLang' => $courseLang,
         ]);
-
         if (!empty($response2) || !is_wp_error($response2)) {
             if (isset($response2['http_code'])) {
                 update_user_meta(get_current_user_id(), 'tutor_nelc_xapi_notify_action', $response2['response']);
@@ -323,7 +334,7 @@ function quiz_attempt_hook($attempt_id) {
 
     $course_id = tutor_utils()->avalue_dot('course_id', $attempt_data);
     $course = get_post($course_id);
-    if (!course_integrate_status($course_id)) {
+    if (!course_integrate_status($course_id) || !event_enabled('xapi_event_attempted')) {
         return;
     }
     $courseName = sanitize_text_field($course->post_title);
@@ -408,7 +419,7 @@ function quiz_attempt_hook($attempt_id) {
 
 add_action('tutor_course_complete_after', 'course_completed_hook', 10, 2);
 function course_completed_hook($course_id) {
-    if (!course_integrate_status($course_id)) {
+    if (!course_integrate_status($course_id) || !event_enabled('xapi_event_completed_course')) {
         return;
     }
     $user = wp_get_current_user();
@@ -457,8 +468,9 @@ function course_completed_hook($course_id) {
         update_user_meta(get_current_user_id(), 'tutor_nelc_xapi_notify_action', 'error');
     }
 
-    $xapiSender1 = new XapiIntegration;
-    $response1 = $xapiSender1->Earned([
+    if (event_enabled('xapi_event_earned')) {
+        $xapiSender1 = new XapiIntegration;
+        $response1 = $xapiSender1->Earned([
         'name' => $usNID,
         'email' => $usEmail,
         'certUrl' => $certificate_link,
@@ -468,14 +480,15 @@ function course_completed_hook($course_id) {
         'courseDesc' => '',
         'courseLang' => $courseLang,
     ]);
-    if (!empty($response1) || !is_wp_error($response1)) {
-        if (isset($response1['http_code'])) {
-            update_user_meta(get_current_user_id(), 'tutor_nelc_xapi_notify_action', $response1['response']);
+        if (!empty($response1) || !is_wp_error($response1)) {
+            if (isset($response1['http_code'])) {
+                update_user_meta(get_current_user_id(), 'tutor_nelc_xapi_notify_action', $response1['response']);
+            } else {
+                update_user_meta(get_current_user_id(), 'tutor_nelc_xapi_notify_action', 'error');
+            }
         } else {
             update_user_meta(get_current_user_id(), 'tutor_nelc_xapi_notify_action', 'error');
         }
-    } else {
-        update_user_meta(get_current_user_id(), 'tutor_nelc_xapi_notify_action', 'error');
     }
 
 }
@@ -500,7 +513,7 @@ function course_rated_hook( $comment_id )
         $courseLang = 'en-US';
     }
 
-    if (!course_integrate_status($course_id)) {
+    if (!course_integrate_status($course_id) || !event_enabled('xapi_event_rated')) {
         return;
     }
 
@@ -545,6 +558,10 @@ add_action('wp_ajax_nopriv_mark_video_watched', 'mark_video_watched_callback');
 
 function mark_video_watched_callback() {
     // التحقق من وجود البيانات المطلوبة
+    if (!event_enabled('xapi_event_watched')) {
+        wp_send_json_error('تم تعطيل إرسال حدث Watched من الإعدادات');
+        return;
+    }
     if (isset($_POST['duration']) && isset($_POST['lesson_id'])) {
         $duration = $_POST['duration'];
 		$lesson_id = $_POST['lesson_id'];
@@ -703,3 +720,19 @@ function tlcf_save_course_meta( int $post_id ) {
 		update_post_meta( $post_id, '_telegram_url', $telegram_url );
 	}
 }
+
+
+// ======================
+//  حقوق ودعم فني احترافي
+// ======================
+add_action('admin_footer', function() {
+    if (!current_user_can('manage_options')) return;
+    echo '<div style="margin:32px 0 0 0;padding:16px 0 0 0;text-align:center;font-size:15px;color:#444;opacity:0.85;">
+    <span style="font-weight:bold;">جميع الحقوق محفوظة &copy; ' . date('Y') . ' المركز الوطني للتعليم الإلكتروني</span><br>
+    <span>للدعم الفني عبر الواتساب: '
+        .'<a href="https://wa.me/966555555555" target="_blank" style="color:#25d366;font-weight:bold;text-decoration:none;">+966555555555</a>'
+        .' &nbsp;|&nbsp; '
+        .'<a href="https://wa.me/966512345678" target="_blank" style="color:#25d366;font-weight:bold;text-decoration:none;">+966512345678</a>'
+    .'</span>
+    </div>';
+});

@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: NELC Integration
- * Version: 3.0.6
+ * Version: 3.0.7
  * Plugin URI: https://wa.me/00201062332549
  * Description: Tutor NELC Integration wordprees plugin, It was launched specifically to link with the National Center for E-Learning in Saudi Arabia, so that the tool sends all the activities of the trainees, starting from registering for the course until obtaining the certificate.
  * Author: Mahmoud Hassan
@@ -14,7 +14,7 @@
  *
  * @package WordPress
  * @author Mahmoud Hassan
- * @since 3.0.6
+ * @since 3.0.7
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -48,11 +48,11 @@ require_once 'includes/lib/tutor-nelc-integration-hooks.php';
 /**
  * Returns the main instance of tutor_nelc_integration to prevent the need to use globals.
  *
- * @since  3.0.6
+ * @since  3.0.7
  * @return object tutor_nelc_integration
  */
 function tutor_nelc_integration() {
-	$instance = tutor_nelc_integration::instance( __FILE__, '3.0.6' );
+	$instance = tutor_nelc_integration::instance( __FILE__, '3.0.7' );
 
 	if ( is_null( $instance->settings ) ) {
 		$instance->settings = tutor_nelc_integration_Settings::instance( $instance );
@@ -133,7 +133,7 @@ function tnelc_enqueue_scripts() {
 		'tnelc-custom-fields-js',
 		$js_url,
 		array( 'tutor-course-builder' ),
-		'3.0.6',
+		'3.0.7',
 		true
 	);
 }
