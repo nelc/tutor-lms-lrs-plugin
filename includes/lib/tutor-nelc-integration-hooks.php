@@ -26,8 +26,13 @@ function nelec_register_statemente_tutor ( $course_id )
     if (!course_integrate_status($course_id) || !event_enabled('xapi_event_registered')) {
         return;
     }
-    global $post;
     $user = wp_get_current_user();
+
+    // Get course info
+    $course = get_post( $course_id );
+    if ( ! $course ) {
+        return;
+    }
 
     // Get student info
     $ntd = get_user_meta( $user->ID, 'nelc_national_id' , true );
@@ -40,10 +45,8 @@ function nelec_register_statemente_tutor ( $course_id )
     $learnerNationality = get_user_meta($user->ID, 'nationality', true);
     $dateOfBirth = get_user_meta($user->ID, 'date_of_birth', true);
 
-
-    
     // Get author info
-    $author_id = $post->post_author;
+    $author_id = $course->post_author;
 	$instructor = get_userdata($author_id);
 
     $instName = $instructor->display_name;
@@ -109,14 +112,25 @@ function nelec_register_statemente_tutor ( $course_id )
 //add_action('tutor/lesson_list/before/topic', 'nelec_initialize_statemente_tutor');
 add_action('tutor/course/started', 'nelec_initialize_statemente_tutor', 10, 2);
 add_action('tutor_course_start_before', 'nelec_initialize_statemente_tutor');
+add_action('tutor_course_start_after', 'nelec_initialize_statemente_tutor');
 function nelec_initialize_statemente_tutor ( $course_id ){
 
     if (!course_integrate_status($course_id) || !event_enabled('xapi_event_initialized')) {
         return;
     }
 
-    global $post;
     $user = wp_get_current_user();
+    $initialized = get_user_meta($user->ID, '_tutor_nelc_course_initialized_' . $course_id, true);
+    if ($initialized) {
+        return;
+    }
+
+
+    // Get course info
+    $course = get_post( $course_id );
+    if ( ! $course ) {
+        return;
+    }
 
     // Get student info
     $ntd = get_user_meta( $user->ID, 'nelc_national_id' , true );
@@ -126,13 +140,12 @@ function nelec_initialize_statemente_tutor ( $course_id ){
 
     
     // Get author info
-    $author_id = $post->post_author;
+    $author_id = $course->post_author;
 	$instructor = get_userdata($author_id);
     $instName = $instructor->display_name;
     $instEmail = $instructor->user_email;
     
     // Get course info
-    $course = get_post( $course_id );
     $courseName = sanitize_text_field($course->post_title);
     $courseDesc = strip_tags($course->post_content);
     $duration = get_post_meta($course_id, '_nelc_course_duration', true);
@@ -159,9 +172,10 @@ function nelec_initialize_statemente_tutor ( $course_id ){
         'courseLang' => $courseLang,
     ]);
 
-    if (!empty($response) || !is_wp_error($response)) {
-        if (isset($response['http_code'])) {
+    if (!empty($response) && !is_wp_error($response)) {
+        if (isset($response['http_code']) && ($response['http_code'] == 200 || $response['http_code'] == 201)) {
             update_user_meta(get_current_user_id(), 'tutor_nelc_xapi_notify_action', $response['response']);
+            update_user_meta(get_current_user_id(), '_tutor_nelc_course_initialized_' . $course_id, time());
         } else {
             update_user_meta(get_current_user_id(), 'tutor_nelc_xapi_notify_action', 'error');
         }
@@ -180,6 +194,10 @@ function lesson_completed_hook($lesson_id) {
     if (!course_integrate_status($course_id)) {
         return;
     }
+
+    // التأكد من إرسال حدث البدء إذا لم يتم إرساله مسبقاً
+    nelec_initialize_statemente_tutor($course_id);
+
 
     // منع إرسال الحدث إذا لم يكن فعالاً
     $send_completed = event_enabled('xapi_event_completed_lesson');
