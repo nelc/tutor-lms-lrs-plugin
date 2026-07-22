@@ -35,6 +35,17 @@ class Earned
         $certUrl = $data['certUrl'];
         $certName = $data['certName'];
 
+        // استخراج cert_hash من الرابط
+        $parsedUrl = parse_url($certUrl);
+        parse_str($parsedUrl['query'] ?? '', $queryParams);
+
+        $certHash = $queryParams['cert_hash'] ?? null;
+
+        // تحديد الـ ID النهائي
+        $certificateId = $certHash
+            ? get_site_url() . '/certificate/' . $certHash
+            : get_site_url() . '/certificate/' . md5($certUrl);
+
         $vars = array(
             'actor' => array(
                 'name' => strval($actor),
@@ -46,7 +57,7 @@ class Earned
                         'display' => array("en-US" => "earned") 
                     ),
             'object' => array(
-                            'id'=> strval($certUrl),
+                            'id'=> strval($certificateId),
                             'definition' => array(
                                 'name' => array($this->lang => strval($certName)),
                                 'type' => 'https://www.opigno.org/en/tincan_registry/activity_type/certificate'

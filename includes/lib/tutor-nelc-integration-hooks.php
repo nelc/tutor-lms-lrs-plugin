@@ -590,7 +590,8 @@ function mark_video_watched_callback() {
 			return;
 		}
 
-		$course = get_post( $lesson->post_parent );
+		$unit = get_post( $lesson->post_parent );
+		$course = get_post( $unit->post_parent );
 
 		$user = wp_get_current_user();
 		$ntd = get_user_meta( $user->ID, 'nelc_national_id' , true );
